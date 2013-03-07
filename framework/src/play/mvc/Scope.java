@@ -4,7 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -172,6 +174,16 @@ public class Scope {
         static final String AT_KEY = "___AT";
         static final String ID_KEY = "___ID";
         static final String TS_KEY = "___TS";
+        
+        static List<SessionListener> _sessionListeners = new ArrayList<SessionListener>();
+        
+        static void addListener(SessionListener listener) {
+        	_sessionListeners.add(listener);
+        }
+        
+        static void removeListener(SessionListener listener) {
+        	_sessionListeners.remove(listener);
+        }
 
         static Session restore() {
             try {
@@ -200,7 +212,9 @@ public class Scope {
                             session = new Session();
                         } else {
 					        if ((Long.parseLong(session.get(TS_KEY))) < System.currentTimeMillis()) {
-                                // Session expired
+					        	for (SessionListener listener : _sessionListeners) {
+					        		listener.doOnTimeout(session);
+								}
                                 session = new Session();
                             }
                         }
