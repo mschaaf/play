@@ -145,3 +145,4 @@ samples-and-tests/zencontact/precompiled
 .idea
 *~
 *.class
+framework/.pydevproject
