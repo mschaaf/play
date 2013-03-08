@@ -3,6 +3,8 @@ import shutil
 import time
 
 from play.utils import *
+from play.format import *
+from play.cleanup import *
 
 COMMANDS = ['eclipsify', 'ec']
 
@@ -145,6 +147,9 @@ def execute(**kargs):
         os.rename(os.path.join(app.path, 'eclipse/connect.launch'), os.path.join(app.path, 'eclipse/Connect JPDA to %s.launch' % application_name))
         os.rename(os.path.join(app.path, 'eclipse/test.launch'), os.path.join(app.path, 'eclipse/Test %s.launch' % application_name))
         os.rename(os.path.join(app.path, 'eclipse/debug.launch'), os.path.join(app.path, 'eclipse/%s.launch' % application_name))
+
+        doFormatting(dotSettings,app,args,play_env)
+        doCleanUp(dotSettings,app,args,play_env)
    
     if is_application:
         print "~ OK, the application \"%s\" is ready for eclipse" % application_name
