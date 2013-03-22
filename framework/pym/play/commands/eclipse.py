@@ -5,6 +5,7 @@ import time
 from play.utils import *
 from play.format import *
 from play.cleanup import *
+from play.findbugs import *
 
 COMMANDS = ['eclipsify', 'ec']
 
@@ -150,6 +151,7 @@ def execute(**kargs):
 
         doFormatting(dotSettings,app,args,play_env)
         doCleanUp(dotSettings,app,args,play_env)
+    	findBugsConfig(dotSettings,app)
    
     if is_application:
         print "~ OK, the application \"%s\" is ready for eclipse" % application_name
