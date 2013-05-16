@@ -809,8 +809,13 @@ public class Play {
      * is 'test' or 'test-?.*'
      * @return true if testmode
      */
-    public static boolean runingInTestMode(){
+    public static boolean runningInTestMode(){
         return id.matches("test|test-?.*");
+    }
+
+    @Deprecated
+    public static boolean runingInTestMode(){
+        return runningInTestMode();
     }
     
 
