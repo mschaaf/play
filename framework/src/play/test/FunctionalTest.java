@@ -16,9 +16,11 @@ import java.util.regex.Pattern;
 import java.net.MalformedURLException;
 
 import org.junit.Before;
-import play.Invoker.InvocationContext;
 
+import play.Invoker.InvocationContext;
+import play.Logger;
 import play.classloading.enhancers.ControllersEnhancer.ControllerInstrumentation;
+import play.libs.F;
 import play.mvc.ActionInvoker;
 import play.mvc.Http;
 import play.mvc.Http.Request;
@@ -29,8 +31,10 @@ import com.ning.http.multipart.FilePart;
 import com.ning.http.multipart.MultipartRequestEntity;
 import com.ning.http.multipart.Part;
 import com.ning.http.multipart.StringPart;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 import play.Invoker;
 import play.mvc.Controller;
 import play.mvc.Router.ActionDefinition;
@@ -306,7 +310,21 @@ public abstract class FunctionalTest extends BaseTest {
     }
 
     public static Response makeRequest(final Request request) {
-        Response response = newResponse();
+        final Response response = newResponse();
+        response.onWriteChunk(new F.Action<Object>() {
+            @Override
+            public void invoke(Object chunk) {
+                if (chunk instanceof byte[]) {
+                    try {
+                        response.out.write((byte[]) chunk);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    Logger.warn("The play test server cannot handle chunked response of non byte array type.");
+                }
+            }
+        });
         makeRequest(request, response);
 
         if (response.status == 302) { // redirect
