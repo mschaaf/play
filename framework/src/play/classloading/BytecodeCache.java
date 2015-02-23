@@ -49,7 +49,7 @@ public class BytecodeCache {
                 int offset = 0;
                 int read = -1;
                 StringBuilder hash = new StringBuilder();
-                while ((read = fis.read()) != 0) {
+                while ((read = fis.read()) > 0) {
                     hash.append((char) read);
                     offset++;
                 }
